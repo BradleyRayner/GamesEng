@@ -2,15 +2,17 @@
 #include <iostream>
 #include "ship.h"
 #include "game.h"
+#include "bullet.h"
 using namespace sf;
 using namespace std;
 
 std::vector<Ship *> ships;
 sf::Texture spritesheet;
-
-
 Sprite invader;
+
 void Load() {
+	auto player = new Player();
+	ships.push_back(player);
 	Invader::speed = 40.f;
 	if (!spritesheet.loadFromFile("res/invaders_sheet.png")) {
 		cerr << "Failed to load spritesheet!" << std::endl;
@@ -48,6 +50,22 @@ void Update(RenderWindow &window) {
 	for (auto &s : ships) {
 		s->Update(dt);
 	};
+
+	//Check if window closed
+	Event event;
+	while (window.pollEvent(event)) {
+		if (event.type == Event::Closed) {
+			window.close();
+			return;
+		}
+	}
+
+	// Quit Via ESC Key
+	if (Keyboard::isKeyPressed(Keyboard::Escape)) {
+		window.close();
+	}
+
+	
 }
 
 int main() {
