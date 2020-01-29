@@ -1,6 +1,7 @@
 //ship.cpp
 #include "ship.h"
 #include "game.h"
+#include "bullet.h"
 using namespace sf;
 using namespace std;
 
@@ -17,6 +18,7 @@ void Ship::Update(const float &dt) {}
 //Define the ship deconstructor. 
 //Although we set this to pure virtual, we still have to define it.
 Ship::~Ship() = default;
+
 
 
 //ship.cpp
@@ -49,7 +51,11 @@ Player::Player() : Ship(IntRect(160, 32, 32, 32)) {
 	setPosition({ gameHeight * .5f, gameHeight - 32.f });
 }
 
+
 void Player::Update(const float &dt) {
+	static vector<Bullet*> bullets;
+	static float firetime = 0.0f;
+	firetime -= dt;
 	Ship::Update(dt);
 	//Move left
 	if (Keyboard::isKeyPressed(Keyboard::A)) {
@@ -59,7 +65,6 @@ void Player::Update(const float &dt) {
 		}
 		
 	}
-	
 	//Move Right
 	if (Keyboard::isKeyPressed(Keyboard::D)) {
 		if (getPosition().x < gameWidth - 32) {
@@ -67,4 +72,19 @@ void Player::Update(const float &dt) {
 		}
 
 	}
+	//Fire bullet
+	if (firetime <= 0 && Keyboard::isKeyPressed(Keyboard::W)) {
+		Bullet::Fire(getPosition(), false);
+		firetime = 0.7f;
+	}
+}
+
+void Ship::Explode() {
+	setTextureRect(IntRect(128,32,32,32));
+	_exploded = true;
+}
+
+bool Ship::is_exploded() const
+{
+	return _exploded;
 }

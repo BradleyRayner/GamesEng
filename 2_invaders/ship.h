@@ -8,7 +8,10 @@ protected:
     sf::IntRect _sprite;
     //Default constructor is hidden
     Ship();
-public:
+	bool _exploded;
+public:	
+	bool is_exploded() const;
+	virtual void Explode();
     //Constructor that takes a sprite
     explicit Ship(sf::IntRect ir);
     //Pure virtual deconstructor -- makes this an abstract class and avoids undefined behaviour!

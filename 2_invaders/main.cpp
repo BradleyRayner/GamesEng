@@ -9,23 +9,14 @@ using namespace std;
 std::vector<Ship *> ships;
 sf::Texture spritesheet;
 Sprite invader;
-
+Player *player;
 void Load() {
-	auto player = new Player();
+	player = new Player();
 	ships.push_back(player);
 	Invader::speed = 40.f;
 	if (!spritesheet.loadFromFile("res/invaders_sheet.png")) {
 		cerr << "Failed to load spritesheet!" << std::endl;
 	}
-	/*float position_x = 32;
-	float position_y = 32;
-	int count = 0;
-	for (int i = 0; i < 10; i++)
-	{
-		Invader* inv = new Invader(sf::IntRect(0, 0, 32, 32), { 100 + (position_x * count),100 });
-		ships.push_back(inv);
-		count++;
-	}*/
 	for (int r = 0; r < invaders_rows; ++r) {		
 		auto rect = IntRect(32 * r, 0, 32, 32);
 		for (int c = 0; c < invaders_columns; ++c) {
@@ -36,6 +27,8 @@ void Load() {
 			ships.push_back(inv);
 		}
 	}
+
+	Bullet::Init();
 	
 }
 
@@ -43,13 +36,16 @@ void Render(RenderWindow &window) {
 	for (const auto s : ships) {
 		window.draw(*s);
 	}
+	Bullet::Render(window);
 }
+
 void Update(RenderWindow &window) {
 	static Clock clock;
 	float dt = clock.restart().asSeconds();
 	for (auto &s : ships) {
 		s->Update(dt);
 	};
+	Bullet::Update(dt);
 
 	//Check if window closed
 	Event event;
@@ -64,8 +60,6 @@ void Update(RenderWindow &window) {
 	if (Keyboard::isKeyPressed(Keyboard::Escape)) {
 		window.close();
 	}
-
-	
 }
 
 int main() {
