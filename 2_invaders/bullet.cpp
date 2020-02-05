@@ -36,6 +36,7 @@ void Bullet::_Update(const float &dt) {
 	else {
 		move(0, dt * 200.0f * (_mode ? 1.0f : -1.0f));
 		const FloatRect boundingBox = getGlobalBounds();
+		static float firetime = 0.0f;
 
 		for (auto s : ships) {
 			if (!_mode && s == player) {
@@ -67,5 +68,16 @@ void Bullet::Render(sf::RenderWindow & window) {
 void Bullet::Fire(const sf::Vector2f &pos, const bool mode) {
 	bullets[bulletPointer].setPosition(pos);
 	bullets[bulletPointer]._mode = mode;
+	if (mode) {
+		bullets[bulletPointer].setTextureRect(sf::IntRect(64, 32, 32, 32));
+	}
+	else {
+		bullets[bulletPointer].setTextureRect(sf::IntRect(32, 32, 32, 32));
+	}
 	bulletPointer++;
+};
+
+void Ship::Explode() {
+	setTextureRect(IntRect(128, 32, 32, 32));
+	_exploded = true;
 };

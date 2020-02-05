@@ -34,7 +34,8 @@ Invader::Invader(sf::IntRect ir, sf::Vector2f pos) : Ship(ir) {
 
 void Invader::Update(const float &dt) {
 	Ship::Update(dt);
-
+	static float firetime = 0.0f;
+	firetime -= dt;
 	move(dt * (direction ? 1.0f : -1.0f) * speed, 0);
 
 	if ((direction && getPosition().x > gameWidth - 16) ||
@@ -43,6 +44,10 @@ void Invader::Update(const float &dt) {
 		for (int i = 1; i < ships.size(); ++i) {
 			ships[i]->move(0, 24);
 		}
+	}
+	if (firetime <= 0 && rand() % 100 == 0) {
+		Bullet::Fire(getPosition(), true);
+		firetime = 4.0f + (rand() % 60);
 	}
 }
 
@@ -79,10 +84,6 @@ void Player::Update(const float &dt) {
 	}
 }
 
-void Ship::Explode() {
-	setTextureRect(IntRect(128,32,32,32));
-	_exploded = true;
-}
 
 bool Ship::is_exploded() const
 {
