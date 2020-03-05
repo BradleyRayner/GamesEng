@@ -1,64 +1,56 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
-//#include "game.h"
+#include "entity.h"
 #include "player.h"
-#include "LevelSystem.h"
+#include "game.h"
+#include "Levelsystem.h"
 
 using namespace sf;
 using namespace std;
 
-int gameWidth = 800;
-int gameHeight = 800;
-Player *player;
-void Load() {
-	player = new Player();
-	ls::loadLevelFile("res/maze_2.txt");
+Player* player;
 
-	// Print the level to the console
+void Load()
+{
+	ls::loadLevelFile("./res/maze_2.txt");
 	for (size_t y = 0; y < ls::getHeight(); ++y) {
 		for (size_t x = 0; x < ls::getWidth(); ++x) {
 			cout << ls::getTile({ x, y });
 		}
 		cout << endl;
 	}
+	player = new Player;
 }
 
-void Render(RenderWindow &window) {
-	player->Render(window);
-}
-
-void Update(RenderWindow &window) {
+void Update(RenderWindow& window)
+{
 	static Clock clock;
 	float dt = clock.restart().asSeconds();
 	player->Update(dt);
+}
 
+void Render(RenderWindow& window)
+{
 	ls::Render(window);
-
-	//Check if window closed
-	Event event;
-	while (window.pollEvent(event)) {
-		if (event.type == Event::Closed) {
-			window.close();
-			return;
-		}
-	}
-
-	// Quit Via ESC Key
-	if (Keyboard::isKeyPressed(Keyboard::Escape)) {
-		window.close();
-	}
-
-
+	player->Render(window);
 }
 
 int main() {
-	RenderWindow window(VideoMode(gameWidth, gameHeight), "Tile Engine");
+	sf::RenderWindow window(sf::VideoMode(gameWidth, gameHeight), "Tile Engine");
 	Load();
-	while (window.isOpen()) {
+	while (window.isOpen())
+	{
+		sf::Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				window.close();
+			}
+
+		}
 		window.clear();
 		Update(window);
 		Render(window);
 		window.display();
+
 	}
 	return 0;
 }

@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 #include "maths.h"
-
 #define ls LevelSystem
 
 class LevelSystem {
@@ -21,10 +20,11 @@ public:
 	static TILE getTile(sf::Vector2ul);
 	//Get Screenspace coordinate of tile
 	static sf::Vector2f getTilePosition(sf::Vector2ul);
+	static size_t getWidth();
+	static size_t getHeight();
 	//get the tile at screenspace pos
 	static TILE getTileAt(sf::Vector2f);
-	static size_t getHeight();
-	static size_t getWidth();
+	static std::vector<sf::Vector2ul> findTiles(TILE);
 
 protected:
 	static std::unique_ptr<TILE[]> _tiles; //Internal array of tiles

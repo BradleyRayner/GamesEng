@@ -30,7 +30,7 @@ namespace sf {
   };
   // Degreess to radians conversion
   static double deg2rad(double degrees) {
-	  return degrees * 3.1415 / 180;
+	  return degrees * 3.14159265358979323846 / 180;
   }
   //Rotate a sf::vector by an angle(degrees)
   template <typename T>

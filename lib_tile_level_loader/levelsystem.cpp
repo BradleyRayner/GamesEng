@@ -1,8 +1,8 @@
 //levelsystem.cpp
-#include <iostream>
 #include "LevelSystem.h"
 #include <fstream>
-
+#include <iostream>
+#include "maths.h"
 using namespace std;
 using namespace sf;
 
@@ -14,7 +14,7 @@ Vector2f LevelSystem::_offset(0.0f, 30.0f);
 float LevelSystem::_tileSize(100.f);
 vector<std::unique_ptr<sf::RectangleShape>> LevelSystem::_sprites;
 
-std::map<LevelSystem::TILE, sf::Color> LevelSystem::_colours{ {WALL, Color::White}, {END, Color::Red} };
+std::map<LevelSystem::TILE, sf::Color> LevelSystem::_colours{ {WALL, Color::Blue}, {END, Color::Black} };
 
 sf::Color LevelSystem::getColor(LevelSystem::TILE t) {
 	auto it = _colours.find(t);
@@ -24,10 +24,30 @@ sf::Color LevelSystem::getColor(LevelSystem::TILE t) {
 	return _colours[t];
 }
 
-void LevelSystem::setColor(LevelSystem::TILE t, sf::Color c) {
-	_colours[t] = c;
+void LevelSystem::setColor(LevelSystem::TILE t, sf::Color c)
+{
+	auto it = _colours.find(t);
+	if (it != _colours.end()) {
+		it->second = c;
+	}
 }
 
+void LevelSystem::Render(RenderWindow& window) {
+	for (size_t i = 0; i < _width * _height; ++i) {
+		window.draw(*_sprites[i]);
+	}
+}
+
+//levelsystem.cpp
+LevelSystem::TILE LevelSystem::getTileAt(Vector2f v) {
+	auto a = v - _offset;
+	if (a.x < 0 || a.y < 0) {
+		throw string("Tile out of range ");
+	}
+	return getTile(Vector2ul((v - _offset) / (_tileSize)));
+}
+
+//levelsystem.cpp
 void LevelSystem::loadLevelFile(const std::string& path, float tileSize) {
 	_tileSize = tileSize;
 	size_t w = 0, h = 0;
@@ -89,12 +109,8 @@ void LevelSystem::loadLevelFile(const std::string& path, float tileSize) {
 	buildSprites();
 }
 
-size_t LevelSystem::getHeight() {
-	return _height;
-}
-size_t LevelSystem::getWidth() {
-	return _width;
-}
+//levelsystem.cpp
+
 void LevelSystem::buildSprites() {
 	_sprites.clear();
 	for (size_t y = 0; y < LevelSystem::getHeight(); ++y) {
@@ -108,10 +124,26 @@ void LevelSystem::buildSprites() {
 	}
 }
 
-Vector2f LevelSystem::getTilePosition(Vector2ul p) {
-	return (Vector2f(p.x, p.y) * _tileSize);
+std::vector<sf::Vector2ul> LevelSystem::findTiles(LevelSystem::TILE type)
+{
+	auto v = vector<sf::Vector2ul>();
+	for (size_t i = 0; i < _width * _height; ++i)
+	{
+		if (_tiles[i] == type)
+		{
+			v.push_back({ i % _width, i / _width });
+		}
+	}
+
+	return v;
 }
 
+//levelsystem.cpp
+Vector2f LevelSystem::getTilePosition(Vector2ul p) {
+	return (Vector2f(p.x, p.y) * _tileSize) + _offset;
+}
+
+//levelsystem.cpp
 LevelSystem::TILE LevelSystem::getTile(Vector2ul p) {
 	if (p.x > _width || p.y > _height) {
 		throw string("Tile out of range: ") + to_string(p.x) + "," + to_string(p.y) + ")";
@@ -119,16 +151,10 @@ LevelSystem::TILE LevelSystem::getTile(Vector2ul p) {
 	return _tiles[(p.y * _width) + p.x];
 }
 
-LevelSystem::TILE LevelSystem::getTileAt(Vector2f v) {
-	auto a = v - _offset;
-	if (a.x < 0 || a.y < 0) {
-		throw string("Tile out of range ");
-	}
-	return getTile(Vector2ul((v - _offset) / (_tileSize)));
+size_t LevelSystem::getWidth() {
+	return _width;
 }
 
-void LevelSystem::Render(RenderWindow &window) {
-	for (size_t i = 0; i < _width * _height; ++i) {
-		window.draw(*_sprites[i]);
-	}
+size_t LevelSystem::getHeight() {
+	return _height;
 }

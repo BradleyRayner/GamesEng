@@ -46,15 +46,18 @@ add_dependencies(2_INVADERS copy_resources)
 file(GLOB_RECURSE SOURCES 3_tile/*.cpp 3_tile/*.h)
 add_executable(3_tile ${SOURCES} )
 target_include_directories(3_tile SYSTEM PRIVATE ${SFML_INCS})
-target_link_libraries(3_tile lib_tile_level_loader sfml-graphics)
+target_link_libraries(3_tile lib_tile_level_loader lib_maths sfml-graphics)
+set_target_properties(3_tile
+    PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/$(Configuration)
+)
+add_dependencies(3_tile copy_resources)
 
 ## Tile loader lib
 file(GLOB_RECURSE SOURCE_FILES lib_tile_level_loader/*.cpp lib_tile_level_loader/*.h)
 add_library(lib_tile_level_loader STATIC ${SOURCE_FILES})
 target_include_directories(lib_tile_level_loader INTERFACE "${CMAKE_SOURCE_DIR}/lib_tile_level_loader/" )
 target_link_libraries(lib_tile_level_loader lib_maths sfml-graphics)
-
- add_dependencies(lib_tile_level_loader copy_resources)
 
 
 # Maths lib
